@@ -11,13 +11,14 @@
 <style>
 :root{
   --red:#C1272D;
+  --red-hot:#E2333B;
   --red-dark:#9E1F24;
-  --ink:#111111;
+  --ink:#0D0D0D;
   --gray:#6B6B6B;
   --line:#E7E4E1;
   --paper:#FFFFFF;
   --tint:#F7F5F3;
-  --screen:#161412;
+  --screen:#100E0D;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -27,102 +28,223 @@ body{
   background:var(--paper);
   line-height:1.6;
   font-size:17px;
+  overflow-x:hidden;
 }
 ::selection{background:var(--red);color:#fff}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 .mono{font-family:'IBM Plex Mono',monospace}
 .display{font-family:'Michroma',sans-serif}
 
+/* ---------- scroll progress ---------- */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0;
+  background:linear-gradient(90deg,var(--red),var(--red-hot));
+  z-index:100;transition:width .1s linear;
+}
+
 /* ---------- header ---------- */
 header{
   position:sticky;top:0;z-index:50;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(8px);
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
-.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav{display:flex;align-items:center;justify-content:space-between;height:66px}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-.brand svg{height:34px;width:auto;display:block}
+.brand svg{height:34px;width:auto;display:block;transition:transform .3s ease}
+.brand:hover svg{transform:scale(1.08)}
 .brand .display{font-size:15px;letter-spacing:.42em;color:var(--red);transform:translateY(1px)}
 .nav-right{display:flex;align-items:center;gap:22px}
-.nav-links{display:flex;gap:22px}
-.nav-links a{color:var(--ink);text-decoration:none;font-size:14px;font-weight:600}
+.nav-links{display:flex;gap:26px}
+.nav-links a{
+  color:var(--ink);text-decoration:none;font-size:14px;font-weight:600;
+  position:relative;padding:4px 0;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;
+  background:var(--red);transform:scaleX(0);transform-origin:right;
+  transition:transform .3s ease;
+}
 .nav-links a:hover{color:var(--red)}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
 .lang{display:flex;border:1px solid var(--ink);border-radius:2px;overflow:hidden}
 .lang button{
   font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;
-  padding:5px 10px;background:transparent;border:none;cursor:pointer;color:var(--ink)
+  padding:5px 10px;background:transparent;border:none;cursor:pointer;color:var(--ink);
+  transition:background .2s,color .2s;
 }
 .lang button.on{background:var(--ink);color:#fff}
 .lang button:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
 
 /* ---------- hero ---------- */
-.hero{padding:72px 0 84px;border-bottom:1px solid var(--line)}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero{
+  padding:80px 0 0;position:relative;overflow:hidden;
+  background:
+    radial-gradient(900px 420px at 85% -10%, rgba(193,39,45,.06), transparent 60%),
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:auto,52px 52px,52px 52px;
+  background-position:0 0,-1px -1px,-1px -1px;
+}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding-bottom:64px}
 .eyebrow{
   font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;
   color:var(--red);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px
 }
 .eyebrow::before{content:"";width:26px;height:2px;background:var(--red);display:inline-block}
+.eyebrow .live{
+  display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);
+  animation:blink 1.6s ease-in-out infinite;
+}
 h1{
   font-family:'Michroma',sans-serif;font-size:clamp(30px,4.6vw,52px);
   line-height:1.18;font-weight:400;letter-spacing:.01em;margin-bottom:24px
 }
-h1 em{font-style:normal;color:var(--red)}
+h1 em{font-style:normal;color:var(--red);position:relative;white-space:nowrap}
+h1 em::after{
+  content:"";position:absolute;left:0;bottom:-4px;height:3px;width:100%;
+  background:var(--red);transform:scaleX(0);transform-origin:left;
+  animation:draw .8s .9s ease forwards;
+}
+@keyframes draw{to{transform:scaleX(1)}}
 .lead{font-size:18px;color:var(--gray);max-width:46ch;margin-bottom:34px}
 .cta-row{display:flex;gap:14px;flex-wrap:wrap}
 .btn{
-  display:inline-block;padding:14px 26px;font-weight:800;font-size:14px;
-  letter-spacing:.04em;text-decoration:none;border-radius:2px
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 26px;font-weight:800;font-size:14px;
+  letter-spacing:.04em;text-decoration:none;border-radius:2px;
+  transition:transform .2s ease,box-shadow .2s ease,background .2s,color .2s,border-color .2s;
 }
-.btn-red{background:var(--red);color:#fff}
-.btn-red:hover{background:var(--red-dark)}
+.btn .arr{transition:transform .25s ease;display:inline-block}
+.btn:hover .arr{transform:translateX(4px)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 10px 26px -12px rgba(193,39,45,.55)}
+.btn-red:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(193,39,45,.6)}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
-.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px)}
 .btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
-/* ---------- device sim ---------- */
-.device{
-  background:#FDFDFC;border:1px solid var(--line);border-radius:18px;
-  box-shadow:0 24px 60px -30px rgba(17,17,17,.25);
-  padding:34px 30px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;
+/* ECG line */
+.ecg{display:block;width:100%;height:70px;position:relative;z-index:1}
+.ecg path{
+  fill:none;stroke:var(--red);stroke-width:2;opacity:.85;
+  stroke-dasharray:220 1600;stroke-dashoffset:1820;
+  animation:ecg 4.2s linear infinite;
 }
+@keyframes ecg{to{stroke-dashoffset:0}}
+
+/* ---------- device sim ---------- */
+.device-wrap{position:relative}
+.device{
+  background:#151312;border:1px solid #2A2624;border-radius:20px;
+  box-shadow:0 34px 80px -30px rgba(13,13,13,.5), 0 0 0 6px rgba(193,39,45,.04);
+  padding:32px 26px;display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;
+  animation:float 6s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .grille{display:grid;grid-template-columns:repeat(3,6px);gap:7px}
-.grille i{width:6px;height:6px;border-radius:50%;background:#D8D4D0}
+.grille i{width:6px;height:6px;border-radius:50%;background:#3A3532}
 .screen{
-  background:var(--screen);border-radius:8px;padding:14px;
-  border:3px solid #2A2624;min-height:236px;display:flex;flex-direction:column;
+  background:var(--screen);border-radius:8px;padding:12px;
+  border:2px solid #2E2926;min-height:262px;display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.6);
+}
+.screen::after{ /* scanlines */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);
 }
 .screen-bar{
-  background:var(--red);color:#fff;text-align:center;
-  font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.3em;
-  padding:7px 0;border-radius:2px;font-weight:500
+  background:var(--red);color:#fff;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.28em;
+  padding:7px 12px;border-radius:2px;font-weight:500;
+  display:flex;justify-content:space-between;align-items:center;
 }
-.screen-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:18px 6px}
+.screen-bar .t{letter-spacing:.1em}
+.screen-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:16px 6px}
 .q{
-  color:#F3EFE9;font-family:'IBM Plex Mono',monospace;font-size:16px;
-  text-align:center;min-height:52px;display:flex;align-items:center;justify-content:center
+  color:#F3EFE9;font-family:'IBM Plex Mono',monospace;font-size:15.5px;
+  text-align:center;min-height:54px;display:flex;align-items:center;justify-content:center;
+  line-height:1.55;
 }
-.q .ok{color:#7ED98B}
+.q .cursor{
+  display:inline-block;width:9px;height:18px;background:var(--red-hot);
+  margin-left:3px;vertical-align:middle;animation:blink 1s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:0}}
+.boot{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8F8880;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding:0 10px;
+}
+.boot .logo{
+  font-family:'Michroma',sans-serif;color:var(--red-hot);letter-spacing:.4em;
+  font-size:16px;align-self:center;margin-bottom:6px;
+  animation:pulse-glow 1.4s ease-in-out infinite;
+}
+@keyframes pulse-glow{0%,100%{text-shadow:0 0 6px rgba(226,51,59,.3)}50%{text-shadow:0 0 18px rgba(226,51,59,.85)}}
+.boot .ok{color:#7ED98B}
+.bootbar{width:100%;height:5px;background:#2A2624;border-radius:3px;overflow:hidden}
+.bootbar i{display:block;height:100%;width:0;background:var(--red-hot);animation:load 1.9s ease forwards}
+@keyframes load{to{width:100%}}
+.done-lines{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:#F3EFE9;
+  display:flex;flex-direction:column;gap:9px;padding:0 10px;text-align:left;
+}
+.done-lines span{
+  opacity:0;transform:translateX(-8px);
+  animation:line-in .4s ease forwards;
+}
+.done-lines span:nth-child(2){animation-delay:.5s}
+.done-lines span:nth-child(3){animation-delay:1s}
+@keyframes line-in{to{opacity:1;transform:none}}
+.done-lines .ok{color:#7ED98B}
+.done-lines .loc{color:#E8C36A}
 .ans{display:flex;gap:10px;justify-content:center}
 .ans button{
   font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;
   padding:9px 22px;border-radius:2px;border:1px solid #55504C;cursor:pointer;
-  background:transparent;color:#F3EFE9;letter-spacing:.08em
+  background:transparent;color:#F3EFE9;letter-spacing:.08em;
+  transition:background .2s,border-color .2s,transform .15s;
 }
-.ans button:hover{border-color:var(--red);color:#fff;background:var(--red)}
+.ans button:hover{border-color:var(--red);color:#fff;background:var(--red);transform:translateY(-1px)}
+.ans button:active{transform:scale(.96)}
 .ans button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.dots{display:flex;gap:7px;justify-content:center;padding-top:2px}
+.dots i{width:7px;height:7px;border-radius:50%;background:#3A3532;transition:background .3s,transform .3s}
+.dots i.on{background:var(--red-hot);transform:scale(1.25)}
 .screen-foot{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6E6862;
-  display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid #2A2624
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8F8880;
+  display:flex;justify-content:space-between;padding:8px 4px 0;border-top:1px solid #2A2624;
 }
+.led{
+  display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;
+  vertical-align:middle;transform:translateY(-1px);
+}
+.led-g{background:#5FCB6E;box-shadow:0 0 6px #5FCB6E;animation:ledblink 2.4s ease-in-out infinite}
+.led-g.d2{animation-delay:.8s}
+.led-r{background:var(--red-hot);box-shadow:0 0 6px var(--red-hot)}
+@keyframes ledblink{0%,100%{opacity:1}50%{opacity:.25}}
 .device-caption{
   grid-column:1/-1;text-align:center;font-family:'IBM Plex Mono',monospace;
-  font-size:11px;color:var(--gray);letter-spacing:.14em;text-transform:uppercase
+  font-size:11px;color:#8F8880;letter-spacing:.14em;text-transform:uppercase;
 }
 
+/* ---------- ticker ---------- */
+.ticker{
+  background:var(--ink);color:#fff;overflow:hidden;white-space:nowrap;
+  border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
+  padding:11px 0;position:relative;z-index:2;
+}
+.ticker-track{display:inline-flex;animation:ticker 30s linear infinite}
+.ticker span{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;padding-right:18px;
+}
+.ticker b{color:var(--red-hot);font-weight:500;padding-right:18px}
+@keyframes ticker{to{transform:translateX(-50%)}}
+
 /* ---------- sections ---------- */
-section{padding:84px 0;border-bottom:1px solid var(--line)}
+section{padding:88px 0;border-bottom:1px solid var(--line)}
 .sec-head{margin-bottom:48px;max-width:64ch}
 h2{
   font-family:'Michroma',sans-serif;font-size:clamp(22px,3vw,32px);
@@ -130,8 +252,18 @@ h2{
 }
 .sec-head p{color:var(--gray)}
 
+/* problem */
 .problem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line)}
-.problem-grid article{padding:30px 28px;border:0 solid var(--line)}
+.problem-grid article{
+  padding:32px 28px;border:0 solid var(--line);position:relative;
+  transition:background .3s ease;
+}
+.problem-grid article::before{
+  content:"";position:absolute;left:0;top:0;width:3px;height:0;background:var(--red);
+  transition:height .35s ease;
+}
+.problem-grid article:hover{background:var(--tint)}
+.problem-grid article:hover::before{height:100%}
 .problem-grid article:nth-child(1){border-right-width:1px;border-bottom-width:1px}
 .problem-grid article:nth-child(2){border-bottom-width:1px}
 .problem-grid article:nth-child(3){border-right-width:1px}
@@ -139,57 +271,108 @@ h2{
 .problem-grid h3 span{color:var(--red);font-family:'IBM Plex Mono',monospace;font-weight:500;margin-right:8px;font-size:14px}
 .problem-grid p{font-size:15px;color:var(--gray)}
 .pull{
-  margin-top:38px;padding-left:22px;border-left:3px solid var(--red);
-  font-size:20px;font-weight:600;max-width:52ch
+  margin-top:42px;padding:26px 30px;
+  background:var(--ink);color:#fff;border-left:4px solid var(--red);
+  font-size:20px;font-weight:600;max-width:56ch;border-radius:2px;
 }
 
-.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
-.steps li{list-style:none;background:var(--paper);padding:26px 20px}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);counter-reset:step}
+.steps li{
+  list-style:none;background:var(--paper);padding:28px 20px;position:relative;
+  transition:background .3s ease;
+}
+.steps li::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--red);
+  transform:scaleX(0);transform-origin:left;transition:transform .35s ease;
+}
+.steps li:hover{background:var(--tint)}
+.steps li:hover::after{transform:scaleX(1)}
 .steps .n{
-  font-family:'IBM Plex Mono',monospace;color:var(--red);font-size:13px;
-  display:block;margin-bottom:14px
+  font-family:'IBM Plex Mono',monospace;color:#fff;background:var(--red);
+  font-size:12px;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
 }
 .steps h3{font-size:15px;font-weight:800;margin-bottom:6px}
 .steps p{font-size:13.5px;color:var(--gray);line-height:1.55}
 .spec{
   margin-top:26px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;
-  color:var(--gray);letter-spacing:.02em
+  color:var(--gray);letter-spacing:.02em;
+  border:1px dashed var(--line);padding:14px 18px;border-radius:2px;
 }
-.spec b{color:var(--ink);font-weight:500}
+.spec b{color:var(--red);font-weight:500}
 
+/* uses */
 .uses{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
-.uses article{background:var(--tint);padding:30px 28px;border-radius:4px;position:relative;overflow:hidden}
+.uses article{
+  background:var(--tint);padding:32px 28px;border-radius:4px;position:relative;overflow:hidden;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
 .uses article::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
+.uses article:hover{transform:translateY(-5px);box-shadow:0 20px 44px -22px rgba(13,13,13,.28)}
 .uses h3{font-size:17px;font-weight:800;margin-bottom:8px}
 .uses p{font-size:15px;color:var(--gray)}
 .uses .tag{
   position:absolute;top:22px;right:22px;font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.14em;color:var(--red);border:1px solid var(--red);
-  padding:3px 8px;border-radius:2px;text-transform:uppercase
+  font-size:10px;letter-spacing:.14em;color:#fff;background:var(--red);
+  padding:4px 9px;border-radius:2px;text-transform:uppercase;
 }
 
+/* traction */
 .trac{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
-.trac article{background:var(--paper);padding:26px 24px}
+.trac article{
+  background:var(--paper);padding:28px 24px;position:relative;
+  transition:background .3s ease;
+}
+.trac article::before{
+  content:"";position:absolute;left:0;bottom:0;right:0;height:3px;background:var(--red);
+  transform:scaleX(0);transform-origin:left;transition:transform .35s ease;
+}
+.trac article:hover{background:var(--tint)}
+.trac article:hover::before{transform:scaleX(1)}
 .trac .y{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--red);letter-spacing:.16em;text-transform:uppercase}
 .trac h3{font-size:16px;font-weight:800;margin:10px 0 4px}
 .trac p{font-size:14px;color:var(--gray)}
 
 /* ---------- contact ---------- */
-.contact{border-bottom:none;background:var(--ink);color:#fff}
+.contact{
+  border-bottom:none;background:var(--ink);color:#fff;position:relative;overflow:hidden;
+}
+.contact::before{
+  content:"";position:absolute;top:-120px;right:-120px;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle, rgba(193,39,45,.22), transparent 65%);
+}
+.contact .wrap{position:relative}
 .contact h2{color:#fff}
 .contact .sec-head p{color:#B8B3AE}
-.contact-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.contact-row{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 .contact .btn-ghost{border-color:#fff;color:#fff}
-.contact .btn-ghost:hover{border-color:var(--red);color:var(--red)}
-.contact .mail{font-family:'IBM Plex Mono',monospace;font-size:15px;color:#fff;text-decoration:none;border-bottom:1px solid var(--red)}
-footer{background:var(--ink);color:#7A756F;padding:26px 0;font-size:13px}
+.contact .btn-ghost:hover{border-color:var(--red-hot);color:var(--red-hot)}
+.contact .mail{
+  font-family:'IBM Plex Mono',monospace;font-size:15px;color:#fff;text-decoration:none;
+  border-bottom:1px solid var(--red);transition:color .2s;
+}
+.contact .mail:hover{color:var(--red-hot)}
+footer{background:var(--ink);color:#7A756F;padding:26px 0;font-size:13px;border-top:1px solid #242220}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
 
 /* ---------- motion ---------- */
 @media (prefers-reduced-motion:no-preference){
-  .rise{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .rise{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
   .rise.in{opacity:1;transform:none}
+  .stagger>*{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+  .stagger.in>*{opacity:1;transform:none}
+  .stagger.in>*:nth-child(1){transition-delay:.05s}
+  .stagger.in>*:nth-child(2){transition-delay:.15s}
+  .stagger.in>*:nth-child(3){transition-delay:.25s}
+  .stagger.in>*:nth-child(4){transition-delay:.35s}
+  .stagger.in>*:nth-child(5){transition-delay:.45s}
+}
+@media (prefers-reduced-motion:reduce){
+  .device{animation:none}
+  .ecg path{animation:none;stroke-dasharray:none;stroke-dashoffset:0}
+  .ticker-track{animation:none}
 }
 
 /* ---------- responsive ---------- */
@@ -206,11 +389,12 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
   .uses{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr}
   .nav-links{display:none}
-  .device{padding:24px 16px;gap:12px}
+  .device{padding:22px 14px;gap:10px}
 }
 </style>
 </head>
 <body>
+<div id="progress"></div>
 
 <header>
   <div class="wrap nav">
@@ -245,36 +429,44 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <p class="eyebrow" data-tr="Akıllı ilk yardım sistemi" data-en="Smart first-aid system">Akıllı ilk yardım sistemi</p>
+      <p class="eyebrow"><span class="live" aria-hidden="true"></span><span data-tr="Akıllı ilk yardım sistemi" data-en="Smart first-aid system">Akıllı ilk yardım sistemi</span></p>
       <h1 data-tr-html="Panik anında <em>doğru karar</em>, doğru zaman." data-en-html="The <em>right decision</em>, right on time — even in panic.">Panik anında <em>doğru karar</em>, doğru zaman.</h1>
       <p class="lead"
          data-tr="ALVOR; acil durum anında kullanıcıya kritik soruları sorar, doğru ilk yardım adımını ekrandan ve sesli olarak yönlendirir. GPS ile konumu alır, GSM ile acil ekiplere otomatik bildirir."
          data-en="ALVOR asks the user a few critical questions in an emergency, guides the correct first-aid step on screen and by voice — then acquires GPS location and automatically notifies emergency services over GSM.">
         ALVOR; acil durum anında kullanıcıya kritik soruları sorar, doğru ilk yardım adımını ekrandan ve sesli olarak yönlendirir. GPS ile konumu alır, GSM ile acil ekiplere otomatik bildirir.</p>
       <div class="cta-row">
-        <a class="btn btn-red" href="mailto:alvor.resmi@gmail.com" data-tr="İletişime geç" data-en="Get in touch">İletişime geç</a>
-        <a class="btn btn-ghost" href="#nasil" data-tr="Nasıl çalışır?" data-en="How it works">Nasıl çalışır?</a>
+        <a class="btn btn-red" href="mailto:alvor.resmi@gmail.com"><span data-tr="İletişime geç" data-en="Get in touch">İletişime geç</span><span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#nasil"><span data-tr="Nasıl çalışır?" data-en="How it works">Nasıl çalışır?</span><span class="arr" aria-hidden="true">↓</span></a>
       </div>
     </div>
 
-    <div class="device rise" aria-label="ALVOR device demo">
-      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="screen">
-        <div class="screen-bar">ALVOR</div>
-        <div class="screen-body">
-          <p class="q" id="q"></p>
-          <div class="ans" id="ans">
-            <button id="yes" onclick="answer()"></button>
-            <button id="no" onclick="answer()"></button>
+    <div class="device-wrap">
+      <div class="device" aria-label="ALVOR device demo">
+        <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="screen">
+          <div class="screen-bar"><span>ΛLVOR</span><span class="t" id="scrTime">--:--</span></div>
+          <div class="screen-body" id="scrBody"></div>
+          <div class="screen-foot">
+            <span><i class="led led-g"></i>GPS</span>
+            <span><i class="led led-g d2"></i>GSM</span>
+            <span><i class="led led-r"></i>PWR</span>
           </div>
         </div>
-        <div class="screen-foot"><span>GPS ●</span><span>GSM ●</span><span>PWR ●</span></div>
+        <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="device-caption" data-tr="İnteraktif demo — cihaz arayüzü" data-en="Interactive demo — device interface">İnteraktif demo — cihaz arayüzü</p>
       </div>
-      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <p class="device-caption" data-tr="İnteraktif demo — cihaz arayüzü" data-en="Interactive demo — device interface">İnteraktif demo — cihaz arayüzü</p>
     </div>
   </div>
+
+  <svg class="ecg" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40 H140 L160 40 L172 18 L184 58 L196 40 H340 L360 40 L372 12 L384 62 L396 40 H560 L580 40 L592 18 L604 58 L616 40 H780 L800 40 L812 10 L824 64 L836 40 H1000 L1020 40 L1032 18 L1044 58 L1056 40 H1200"/>
+  </svg>
 </section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
 
 <section id="problem">
   <div class="wrap">
@@ -285,7 +477,7 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
          data-en="In an emergency, people usually have the information. What they lack is the ability to put it in the right order under panic.">
         Acil durumda insanların elinde bilgi vardır; eksik olan, o bilgiyi panik altında doğru sıraya koyabilmektir.</p>
     </div>
-    <div class="problem-grid rise">
+    <div class="problem-grid rise stagger">
       <article>
         <h3><span>/01</span><b data-tr="Panik &amp; kararsızlık" data-en="Panic &amp; indecision">Panik &amp; kararsızlık</b></h3>
         <p data-tr="Stres altında karar verme yeteneği dramatik şekilde düşer." data-en="Decision-making ability drops dramatically under stress.">Stres altında karar verme yeteneği dramatik şekilde düşer.</p>
@@ -313,7 +505,7 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
       <p class="eyebrow" data-tr="Nasıl çalışır" data-en="How it works">Nasıl çalışır</p>
       <h2 data-tr="Beş adımda uçtan uca süreç." data-en="End-to-end in five steps.">Beş adımda uçtan uca süreç.</h2>
     </div>
-    <ul class="steps rise">
+    <ul class="steps rise stagger">
       <li><span class="n">01</span><h3 data-tr="Acil durum" data-en="Emergency">Acil durum</h3><p data-tr="Olay oluşur, kullanıcı cihazı açar." data-en="An incident occurs; the user turns on the device.">Olay oluşur, kullanıcı cihazı açar.</p></li>
       <li><span class="n">02</span><h3 data-tr="Soru &amp; cevap" data-en="Q&amp;A">Soru &amp; cevap</h3><p data-tr="Kullanıcı kritik soruları yanıtlar." data-en="The user answers the critical questions.">Kullanıcı kritik soruları yanıtlar.</p></li>
       <li><span class="n">03</span><h3 data-tr="Analiz" data-en="Analysis">Analiz</h3><p data-tr="Sistem durumu değerlendirir, doğru adımı gösterir." data-en="The system evaluates and shows the correct step.">Sistem durumu değerlendirir, doğru adımı gösterir.</p></li>
@@ -333,7 +525,7 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
       <p class="eyebrow" data-tr="Kullanım alanları" data-en="Use cases">Kullanım alanları</p>
       <h2 data-tr="Yüksek insan yoğunluğu olan her alan." data-en="Anywhere people gather — and every vehicle on the road.">Yüksek insan yoğunluğu olan her alan.</h2>
     </div>
-    <div class="uses rise">
+    <div class="uses rise stagger">
       <article>
         <span class="tag" data-tr="Yeni" data-en="New">Yeni</span>
         <h3 data-tr="Araç içi &amp; filo güvenliği" data-en="In-vehicle &amp; fleet safety">Araç içi &amp; filo güvenliği</h3>
@@ -363,7 +555,7 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
       <p class="eyebrow" data-tr="Yolculuk" data-en="Traction">Yolculuk</p>
       <h2 data-tr="Fikirden çalışan prototipe." data-en="From idea to working prototype.">Fikirden çalışan prototipe.</h2>
     </div>
-    <div class="trac rise">
+    <div class="trac rise stagger">
       <article>
         <span class="y" data-tr="Hackathon" data-en="Hackathon">Hackathon</span>
         <h3 data-tr="Çözüm Sende '26 — Türkiye 6.sı" data-en="Çözüm Sende '26 — 6th in Türkiye">Çözüm Sende '26 — Türkiye 6.sı</h3>
@@ -393,7 +585,7 @@ footer .display{color:var(--red);font-size:12px;letter-spacing:.4em}
         Eğitim kurumları, belediyeler, filo operatörleri ve sponsorlar — ALVOR'u sahada birlikte test edelim.</p>
     </div>
     <div class="contact-row rise">
-      <a class="btn btn-red" href="mailto:alvor.resmi@gmail.com" data-tr="E-posta gönder" data-en="Send an email">E-posta gönder</a>
+      <a class="btn btn-red" href="mailto:alvor.resmi@gmail.com"><span data-tr="E-posta gönder" data-en="Send an email">E-posta gönder</span><span class="arr" aria-hidden="true">→</span></a>
       <a class="mail" href="mailto:alvor.resmi@gmail.com">alvor.resmi@gmail.com</a>
     </div>
   </div>
@@ -423,42 +615,114 @@ function setLang(l){
   document.title=(l==='tr')
     ?'ALVOR — Panik anında doğru karar, doğru zaman'
     :'ALVOR — The right decision, right on time';
-  renderSim();
+  buildTicker();
+  startBoot();
+}
+
+/* ---------- ticker ---------- */
+var tickerWords={
+  tr:['Acil durum desteği','GPS konum','GSM bildirim','Sesli yönlendirme','ESP32 gömülü sistem','İlk yardım'],
+  en:['Emergency support','GPS location','GSM alert','Voice guidance','ESP32 embedded','First aid']
+};
+function buildTicker(){
+  var track=document.getElementById('tickerTrack');
+  var half=tickerWords[lang].map(function(w){return '<span>'+w+'</span><b>+</b>';}).join('');
+  track.innerHTML=half+half; /* duplicate for seamless loop */
 }
 
 /* ---------- device simulation ---------- */
-var flow={
+var SIM={
   tr:{
+    boot:['> sistem başlatılıyor...','> GPS bağlandı <b class="ok">✓</b>','> GSM hazır <b class="ok">✓</b>'],
     q:['Bilinci açık mı?','Nefes alıyor mu?','Görünür kanama var mı?'],
     yes:'EVET', no:'HAYIR',
-    done:'Yönlendirme başlatıldı\nGPS konumu alındı\n112 SMS ile bilgilendirildi ✓',
+    done:['<b class="ok">✓</b> Yönlendirme başlatıldı','<b class="loc">◉</b> GPS: 40.7654°K 29.9408°D','<b class="ok">✓</b> 112 SMS ile bilgilendirildi'],
     restart:'YENİDEN BAŞLAT'
   },
   en:{
+    boot:['> booting system...','> GPS connected <b class="ok">✓</b>','> GSM ready <b class="ok">✓</b>'],
     q:['Is the person conscious?','Are they breathing?','Any visible bleeding?'],
     yes:'YES', no:'NO',
-    done:'Guidance started\nGPS location acquired\nEmergency SMS sent ✓',
+    done:['<b class="ok">✓</b> Guidance started','<b class="loc">◉</b> GPS: 40.7654°N 29.9408°E','<b class="ok">✓</b> Emergency SMS sent'],
     restart:'RESTART'
   }
 };
-var step=0;
-function renderSim(){
-  var f=flow[lang], q=document.getElementById('q'),
-      y=document.getElementById('yes'), n=document.getElementById('no');
-  if(step<f.q.length){
-    q.textContent=f.q[step];
-    q.classList.remove('ok');
-    y.textContent=f.yes; n.textContent=f.no; n.style.display='';
-  }else{
-    q.innerHTML='<span class="ok">'+f.done.replace(/\n/g,'<br>')+'</span>';
-    y.textContent=f.restart; n.style.display='none';
-  }
+var step=0, timers=[];
+var body=document.getElementById('scrBody');
+function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+function t(fn,ms){timers.push(setTimeout(fn,ms));}
+
+function startBoot(){
+  clearTimers(); step=0;
+  var f=SIM[lang];
+  body.innerHTML=
+    '<div class="boot">'+
+      '<span class="logo">ΛLVOR</span>'+
+      '<div class="bootbar"><i></i></div>'+
+      '<div id="bootLines"></div>'+
+    '</div>';
+  var lines=document.getElementById('bootLines');
+  lines.style.display='flex';lines.style.flexDirection='column';lines.style.gap='7px';
+  f.boot.forEach(function(line,i){
+    t(function(){
+      var s=document.createElement('span');
+      s.innerHTML=line;
+      lines.appendChild(s);
+    },500+i*600);
+  });
+  t(showQuestion,500+f.boot.length*600+500);
 }
+
+function showQuestion(){
+  var f=SIM[lang];
+  body.innerHTML=
+    '<p class="q"><span id="qText"></span><span class="cursor"></span></p>'+
+    '<div class="ans">'+
+      '<button onclick="answer()">'+f.yes+'</button>'+
+      '<button onclick="answer()">'+f.no+'</button>'+
+    '</div>'+
+    '<div class="dots">'+f.q.map(function(_,i){return '<i class="'+(i<=step?'on':'')+'"></i>';}).join('')+'</div>';
+  typeText(f.q[step]);
+}
+
+function typeText(text){
+  var el=document.getElementById('qText'), i=0;
+  (function tick(){
+    if(!el||!el.isConnected)return;
+    el.textContent=text.slice(0,++i);
+    if(i<text.length)t(tick,32);
+  })();
+}
+
+function showDone(){
+  var f=SIM[lang];
+  body.innerHTML=
+    '<div class="done-lines">'+f.done.map(function(l){return '<span>'+l+'</span>';}).join('')+'</div>'+
+    '<div class="ans" style="margin-top:6px"><button onclick="startBoot()">'+f.restart+'</button></div>';
+}
+
 function answer(){
-  step=(step<flow[lang].q.length)?step+1:0;
-  renderSim();
+  clearTimers();
+  step++;
+  if(step<SIM[lang].q.length){showQuestion();}
+  else{showDone();}
 }
-renderSim();
+
+/* ---------- screen clock ---------- */
+function tickClock(){
+  var d=new Date();
+  document.getElementById('scrTime').textContent=
+    String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+tickClock();setInterval(tickClock,15000);
+
+/* ---------- scroll progress ---------- */
+var prog=document.getElementById('progress');
+window.addEventListener('scroll',function(){
+  var h=document.documentElement;
+  var p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;
+  prog.style.width=p+'%';
+},{passive:true});
 
 /* ---------- scroll reveal ---------- */
 if('IntersectionObserver' in window){
@@ -469,6 +733,10 @@ if('IntersectionObserver' in window){
 }else{
   document.querySelectorAll('.rise').forEach(function(el){el.classList.add('in');});
 }
+
+/* ---------- init ---------- */
+buildTicker();
+startBoot();
 </script>
 </body>
 </html>
